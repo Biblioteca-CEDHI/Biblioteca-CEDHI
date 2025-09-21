@@ -37,7 +37,7 @@ if (session_status() === PHP_SESSION_NONE) {
                     <small class="text-muted">(<?php echo ucfirst($_SESSION['role']); ?>)</small>
                 </div>
                 <a class="btn btn-outline-light btn-sm ml-3" href="../../logout.php">
-                    <i class="fas fa-sign-out-alt"></i> Salir
+                    <i class="fas fa-sign-out-alt"></i> Cerrar sesión
                 </a>
             </div>
         </div>

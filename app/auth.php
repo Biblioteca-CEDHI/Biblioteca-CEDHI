@@ -83,14 +83,26 @@ function loginWithGoogle() {
 }
 
 function logout() {
-    unset($_SESSION['access_token']);
-    // *** MODIFICACIÓN: También limpiar los datos de usuario de la sesión
-    unset($_SESSION['user_id']);
-    unset($_SESSION['user_first_name']);
-    unset($_SESSION['user_last_name']);
-    unset($_SESSION['user_email_address']);
-    unset($_SESSION['user_image']);
-    unset($_SESSION['role']);
+    global $google_client;
+    
+    if (isset($_SESSION['access_token'])) {
+        try {
+            $google_client->revokeToken($_SESSION['access_token']);
+        } catch (Exception $e) {
+            error_log("Error revoking Google token: " . $e->getMessage());
+        }
+    }
+
+    $_SESSION = array();
+
+    if (ini_get("session.use_cookies")) {
+        $params = session_get_cookie_params();
+        setcookie(session_name(), '', time() - 42000,
+            $params["path"], $params["domain"],
+            $params["secure"], $params["httponly"]
+        );
+    }
+ 
     session_destroy();
 }
 ?>
