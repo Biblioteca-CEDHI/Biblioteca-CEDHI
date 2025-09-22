@@ -6,5 +6,5 @@ requireRole(['admin', 'owner']);
 include __DIR__ . '/../templates/dashboard_base.php';
 
 // Y LUEGO agregar el panel especial de administración
-include __DIR__ . '/../templates/admin_panel.php';
+//include __DIR__ . '/../templates/admin_panel.php';
 ?>
