@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/../../app/paths.php';
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
@@ -17,19 +18,19 @@ $base_url = '/Biblioteca-CEDHI';
         crossorigin="anonymous" referrerpolicy="no-referrer" />
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-    .user-avatar {
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        object-fit: cover;
-    }
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
     </style>
 </head>
 
 <body>
     <header class="flex justify-between items-center p-4 sm:px-8 bg-blue-950 text-white shadow-lg">
         <div class="flex items-center space-x-2 sm:space-x-4">
-            <img src="<?php echo $base_url; ?>/img/logo_cedhi_recortado.png" alt="logo"
+            <img src="<?php echo url('img/logo_cedhi_recortado.png') ?>" alt="logo"
                 class="h-12 sm:h-14 w-auto drop-shadow-sm" />
             <h1 class="text-lg sm:text-2xl font-extrabold tracking-wide">
                 Biblioteca <span class="text-blue-300">CEDHI</span>
@@ -52,7 +53,7 @@ $base_url = '/Biblioteca-CEDHI';
                 class="flex items-center space-x-1 sm:space-x-2 bg-blue-700 border-blue-600 text-white py-2 px-3 sm:py-2 sm:px-5 rounded-lg hover:bg-blue-600 hover:border-blue-500 transition-colors duration-200 outline-none"
                 onclick="window.location.href='../../logout.php'">
                 <i class="fa-solid fa-right-from-bracket text-sm sm:text-base"></i>
-                <span class="hidden sm:block">Cerrar sesión </span>
+                <span class="hidden sm:block">Cerrar sesión</span>
             </button>
         </div>
     </header>
