@@ -36,8 +36,8 @@ $base_url = '/Biblioteca-CEDHI';
             </h1>
         </div>
         <div class="flex items-center space-x-2 sm:space-x-4">
-            <img src="<?php echo $_SESSION['user_image'] ?? $base_url . '/img/default-avatar.png'; ?>"
-                class="h-10 w-10 rounded-full object-cover" alt="Avatar">
+            <img src="<?php echo $_SESSION['user_image'] ?? 'https://via.placeholder.com/40'; ?>"
+                class="user-avatar mr-2" alt="Avatar">
 
             <div class="text-right hidden sm:block">
                 <span class="block text-sm text-blue-200">Hola,</span>
