@@ -1,24 +1,13 @@
-# Biblioteca CEDHI
+# Biblioteca CEDHI – Login Unificado
 
-Proyecto web para la gestión y consulta de recursos educativos y de lectura. Incluye módulos interactivos para facilitar el acceso a libros, planes de negocio y recursos externos.  
+## Descripción del Proyecto
 
-## Módulos
+Este proyecto tiene como objetivo centralizar el acceso a los diferentes servicios de la **Biblioteca CEDHI** mediante un **login unificado**.  
+Con un único inicio de sesión, los usuarios pueden acceder a distintos módulos según su rol:
 
-### 1. Biblioteca Virtual
-- Catálogo de libros.
-- Visualización de detalles de cada libro.
+- **Biblioteca Virtual** – Catálogo de libros digitales.  
+- **Planes de Negocio** – Repositorio de planes y proyectos empresariales.  
+- **Recursos Externos** – Acceso a enlaces de bibliotecas y recursos gratuitos.  
+- **Sala de Lectura** – Gestión de préstamos y devoluciones de libros (acceso controlado por rol).  
 
-### 2. Repositorio de Planes de Negocio
-- Búsqueda de planes.
-- Resúmenes de los documentos.
-- Visualización completa de los planes.
-
-### 3. Repositorio Externo
-- Integración de módulos externos.
-- Mosaico de links a recursos gratuitos y educativos.
-
-### 4. Sala de Lectura
-- Catálogo de lectura interactivo.
-- Visualizador de libros para lectura directa en la plataforma.
-
----
+El sistema permite que cada usuario vea únicamente los módulos a los que tiene acceso, mostrando los demás como deshabilitados si su rol no lo permite. Esto optimiza la experiencia y evita confusión al navegar entre servicios.

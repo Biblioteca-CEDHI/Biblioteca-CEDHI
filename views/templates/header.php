@@ -37,8 +37,13 @@ $base_url = '/Biblioteca-CEDHI';
             </h1>
         </div>
         <div class="flex items-center space-x-2 sm:space-x-4">
+<<<<<<< HEAD
             <img src="<?php echo $_SESSION['user_image'] ?>"
                 class="h-10 w-10 rounded-full object-cover" alt="Avatar">
+=======
+            <img src="<?php echo url('img/default-avatar.png') ?>"
+                class="user-avatar mr-2" alt="Avatar">
+>>>>>>> 89d1f2eb1bda4b1f3f58a109a9f863e94166f28a
 
             <div class="text-right hidden sm:block">
                 <span class="block text-sm text-blue-200">Hola,</span>
