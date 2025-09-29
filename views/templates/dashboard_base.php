@@ -157,7 +157,7 @@ $token = generateToken();
 <script>
     const token = '<?php echo $token; ?>';
     document.getElementById('IrSalaLectura').addEventListener('click', () => {
-        localStorage.setItem('serviceToken', token);
+      
         window.location.href = 'http://localhost:3010/sistema-biblioteca/token-login?token=' + token;
     });
 </script>
