@@ -3,8 +3,9 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 require_once __DIR__ . '/../../app/tokenController.php';
-$token = generateToken();
-// var_dump($token); // DEBUG: muestra el token
+
+$tokenPlanes = generateToken();
+$tokenSala = generateToken();
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -16,7 +17,6 @@ $token = generateToken();
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <style>
-        /* Estilos base */
         .user-avatar {
             width: 40px;
             height: 40px;
@@ -24,10 +24,8 @@ $token = generateToken();
             object-fit: cover;
         }
 
-        /* Estilos para la sección de bienvenida */
         .welcome-header {
             background-color: #2C3E50;
-            /* cedhi-primary */
             color: white;
             border-radius: 15px;
             padding: 2.5rem;
@@ -35,7 +33,6 @@ $token = generateToken();
             box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
         }
 
-        /* Estilos para las tarjetas de módulos */
         .module-card {
             transition: all 0.3s ease;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
@@ -53,11 +50,11 @@ $token = generateToken();
                 extend: {
                     colors: {
                         cedhi: {
-                            primary: "#2C3E50", // Gris Oscuro Azulado (Base)
-                            secondary: "#34495E", // Tono más claro para hover
-                            accent: "#1ABC9C", // Verde Turquesa (Acento)
-                            light: "#ECF0F1", // Fondo
-                            success: "#27AE60", // Verde Esmeralda
+                            primary: "#2C3E50",
+                            secondary: "#34495E",
+                            accent: "#1ABC9C",
+                            light: "#ECF0F1",
+                            success: "#27AE60",
                         }
                     }
                 }
@@ -81,10 +78,9 @@ $token = generateToken();
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <div
-                class="module-card bg-white rounded-xl p-8 flex flex-col items-center text-center border-b-4 border-cedhi-accent">
-                <div
-                    class="h-16 w-16 flex items-center justify-center rounded-full bg-cedhi-light text-cedhi-accent mb-4 text-3xl shadow-md">
+            <!-- Biblioteca Virtual -->
+            <div class="module-card bg-white rounded-xl p-8 flex flex-col items-center text-center border-b-4 border-cedhi-accent">
+                <div class="h-16 w-16 flex items-center justify-center rounded-full bg-cedhi-light text-cedhi-accent mb-4 text-3xl shadow-md">
                     <i class="fa-solid fa-book"></i>
                 </div>
                 <h2 class="text-xl font-bold text-gray-800 mb-2">Biblioteca Virtual</h2>
@@ -96,25 +92,25 @@ $token = generateToken();
                     <i class="fa-solid fa-book-open-reader mr-2"></i> Entrar
                 </a>
             </div>
-            <div
-                class="module-card bg-white rounded-xl p-8 flex flex-col items-center text-center border-b-4 border-cedhi-accent">
-                <div
-                    class="h-16 w-16 flex items-center justify-center rounded-full bg-cedhi-light text-cedhi-accent mb-4 text-3xl shadow-md">
+
+            <!-- ✅ Planes de Negocio -->
+            <div class="module-card bg-white rounded-xl p-8 flex flex-col items-center text-center border-b-4 border-cedhi-accent">
+                <div class="h-16 w-16 flex items-center justify-center rounded-full bg-cedhi-light text-cedhi-accent mb-4 text-3xl shadow-md">
                     <i class="fa-solid fa-chart-line"></i>
                 </div>
                 <h2 class="text-xl font-bold text-gray-800 mb-2">Planes de Negocio</h2>
                 <p class="text-base text-gray-500 mb-6">
                     Consulta repositorios de planes y proyectos de la institución.
                 </p>
-                <a href="https://repositorio-planes.cedhinuevaarequipa.edu.pe/"
+                <button id="IrPlanesNegocio"
                     class="w-full py-3 px-4 rounded-lg font-semibold text-white bg-cedhi-primary hover:bg-cedhi-secondary transition shadow-lg hover:shadow-xl">
                     <i class="fa-solid fa-folder-open mr-2"></i> Entrar
-                </a>
+                </button>
             </div>
-            <div
-                class="module-card bg-white rounded-xl p-8 flex flex-col items-center text-center border-b-4 border-cedhi-accent">
-                <div
-                    class="h-16 w-16 flex items-center justify-center rounded-full bg-cedhi-light text-cedhi-accent mb-4 text-3xl shadow-md">
+
+            <!-- Repositorios Externos -->
+            <div class="module-card bg-white rounded-xl p-8 flex flex-col items-center text-center border-b-4 border-cedhi-accent">
+                <div class="h-16 w-16 flex items-center justify-center rounded-full bg-cedhi-light text-cedhi-accent mb-4 text-3xl shadow-md">
                     <i class="fa-solid fa-link"></i>
                 </div>
                 <h2 class="text-xl font-bold text-gray-800 mb-2">Repositorios Externos</h2>
@@ -127,23 +123,19 @@ $token = generateToken();
                 </a>
             </div>
 
-           
+            <!-- Sala de Lectura (solo roles permitidos) -->
             <?php
             $allowedRolesForSala = ['admin', 'owner', 'bibliotecario', 'tutor'];
             if (in_array($_SESSION['role'], $allowedRolesForSala)) {
             ?>
-                <div
-                    class="module-card bg-white rounded-xl p-8 flex flex-col items-center text-center border-b-4 border-cedhi-success">
-
-                    <div
-                        class="h-16 w-16 flex items-center justify-center rounded-full bg-cedhi-light text-cedhi-success mb-4 text-3xl shadow-md">
+                <div class="module-card bg-white rounded-xl p-8 flex flex-col items-center text-center border-b-4 border-cedhi-success">
+                    <div class="h-16 w-16 flex items-center justify-center rounded-full bg-cedhi-light text-cedhi-success mb-4 text-3xl shadow-md">
                         <i class="fa-solid fa-book-open"></i>
                     </div>
                     <h2 class="text-xl font-bold text-gray-800 mb-2">Sala de Lectura</h2>
                     <p class="text-base text-gray-500 mb-6">
                         Gestión y control de préstamos de libros físicos.
                     </p>
-     
                     <button id="IrSalaLectura"
                         class="w-full py-3 px-4 rounded-lg font-semibold text-white bg-cedhi-success hover:bg-green-700 transition shadow-lg hover:shadow-xl">
                         <i class="fa-solid fa-clipboard-list mr-2"></i> Entrar
@@ -152,13 +144,18 @@ $token = generateToken();
             <?php } ?>
         </div>
     </main>
-
 </body>
+
 <script>
-    const token = '<?php echo $token; ?>';
+    const tokenPlanes = '<?php echo $tokenPlanes; ?>';
+    const tokenSala = '<?php echo $tokenSala; ?>';
+
+    document.getElementById('IrPlanesNegocio').addEventListener('click', () => {
+        window.location.href = 'http://localhost/PlanesTrabajo/index.php?token=' + tokenPlanes;
+    });
+
     document.getElementById('IrSalaLectura').addEventListener('click', () => {
-      
-        window.location.href = 'http://localhost:3010/sistema-biblioteca/token-login?token=' + token;
+        window.location.href = 'http://localhost:3010/sistema-biblioteca/token-login?token=' + tokenSala;
     });
 </script>
 

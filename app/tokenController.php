@@ -17,5 +17,4 @@ function generateToken() {
     $token = JWT::encode($payload, $key, 'HS256');
     return $token;
 }
-
 ?>
