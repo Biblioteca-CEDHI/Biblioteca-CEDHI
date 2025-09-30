@@ -14,7 +14,6 @@ $stmt = $pdo->prepare("
     SELECT id, CONCAT(first_name, ' ', last_name) AS nombre, email
     FROM users
     WHERE role != 'owner' AND (first_name LIKE :q OR last_name LIKE :q OR email LIKE :q)
-    AND id NOT IN (SELECT user_id FROM module_admins)
     LIMIT 10
 ");
 $stmt->execute([':q' => "%$q%"]);

@@ -2,6 +2,8 @@
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
+
+require_once __DIR__ . '/../../app/paths.php';
 require_once __DIR__ . '/../../app/tokenController.php';
 
 $tokenPlanes = generateToken();
@@ -117,7 +119,7 @@ $tokenSala = generateToken();
                 <p class="text-base text-gray-500 mb-6">
                     Accede a enlaces directos a recursos gratuitos.
                 </p>
-                <a href="/estudiante/dashboard.php"
+                <a href="<?php echo url('pages/repositorios.php') ?>"
                     class="w-full py-3 px-4 rounded-lg font-semibold text-white bg-cedhi-primary hover:bg-cedhi-secondary transition shadow-lg hover:shadow-xl">
                     <i class="fa-solid fa-external-link-alt mr-2"></i> Entrar
                 </a>
