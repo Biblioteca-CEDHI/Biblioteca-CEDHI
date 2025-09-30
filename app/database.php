@@ -2,7 +2,7 @@
 $host = "localhost";
 $user = "root"; // tu usuario de MySQL
 $pass = "";     // tu contraseña de MySQL (por defecto en XAMPP está vacía)
-$db   = "google_login";// nombre de la bd
+$db   = "biblioteca_cedhi";// nombre de la bd
 
 try {
     $pdo = new PDO("mysql:host=$host;dbname=$db;charset=utf8", $user, $pass);
