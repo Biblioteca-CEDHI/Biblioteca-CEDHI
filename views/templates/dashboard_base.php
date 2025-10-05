@@ -6,7 +6,7 @@ if (session_status() === PHP_SESSION_NONE) {
 require_once __DIR__ . '/../../app/paths.php';
 require_once __DIR__ . '/../../app/tokenController.php';
 
-$tokenPlanes = generateToken();
+$tokenPlanes = generateTokenForExternal();
 $tokenSala = generateToken();
 ?>
 <!DOCTYPE html>
