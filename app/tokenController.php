@@ -1,33 +1,28 @@
 <?php
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 require_once __DIR__ . '/../vendor/autoload.php';
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 
-function generateToken() {
+function generateToken($expSeconds = 3600) {
+    if (session_status() === PHP_SESSION_NONE) session_start();
+
     $payload = [
-        'userId' => $_SESSION['user_id'],
-        'email' => $_SESSION['user_email_address'],
-        'nombre' => $_SESSION['user_first_name'],
-        'apellido' => $_SESSION['user_last_name'],
-        'rol' => $_SESSION['role'],
-        'iat' => time(),
-        'exp' => time() + 3600 
-    ];
-    $key = 'cedhi2024biblio'; 
-    $token = JWT::encode($payload, $key, 'HS256');
-    return $token;
-}
-function generateTokenForExternal() {
-    $payload = [
-        'userId'   => $_SESSION['user_id'],
-        'email'    => $_SESSION['user_email_address'],
-        'nombre'   => $_SESSION['user_first_name'],
-        'apellido' => $_SESSION['user_last_name'],
-        'rol'      => $_SESSION['role'],
+        'userId'   => $_SESSION['user_id'] ?? null,
+        'email'    => $_SESSION['user_email_address'] ?? null,
+        'nombre'   => $_SESSION['user_first_name'] ?? null,
+        'apellido' => $_SESSION['user_last_name'] ?? null,
+        'rol'      => $_SESSION['role'] ?? null,
         'iat'      => time(),
-        'exp'      => time() + 3600
+        'exp'      => time() + $expSeconds
     ];
-    $key = 'cedhi2024biblio'; 
-    return JWT::encode($payload, $key, 'HS256');
+
+    //error_log("DEBUG - Payload generado: " . print_r($payload, true));
+
+    $key = 'cedhi2024biblio';
+    return Firebase\JWT\JWT::encode($payload, $key, 'HS256');
 }
+
 ?>
