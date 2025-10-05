@@ -5,7 +5,7 @@ if (session_status() === PHP_SESSION_NONE) {
 
 require_once __DIR__ . '/../../app/paths.php';
 require_once __DIR__ . '/../../app/tokenController.php';
-
+//error_log("DEBUG - Antes de generar token: " . print_r($_SESSION, true));
 $tokenPlanes = generateToken();
 $tokenSala = generateToken();
 ?>
