@@ -64,8 +64,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $user_id_to_delete = $_POST['user_id_to_delete'] ?? null;
         if ($user_id_to_delete) {
             try {
-                $stmt_delete = $pdo->prepare("DELETE FROM module_admins WHERE user_id = :user_id");
-                $stmt_delete->execute([':user_id' => $user_id_to_delete]);
+                $stmt_delete = $pdo->prepare("DELETE FROM module_admins WHERE user_id = :user_id AND module_id = :module_id");
+                $stmt_delete->execute([':user_id' => $user_id_to_delete, ':module_id' => $_POST['module_id_to_delete']]);
 
                 $check = $pdo->prepare("SELECT COUNT(*) FROM module_admins WHERE user_id = :user_id");
                 $check->execute([':user_id' => $user_id_to_delete]);
@@ -175,6 +175,7 @@ if (isset($pdo)) {
 
     function openUserModal() {
         document.getElementById('userModal').classList.replace('hidden', 'flex');
+        searchUsers('');
     }
 
     function closeUserModal() {
@@ -217,12 +218,10 @@ if (isset($pdo)) {
     <style>
     body {
         background-color: #ECF0F1;
-        /* Fondo cedhi-light */
     }
 
     .input-focus:focus {
         border-color: #1ABC9C;
-        /* cedhi-accent */
         box-shadow: 0 0 0 2px rgba(26, 188, 156, 0.5);
     }
     </style>
@@ -322,7 +321,6 @@ if (isset($pdo)) {
             </div>
         </div>
 
-        <!-- BLOQUE DE USUARIOS REGISTRADOS -->
         <div class="bg-white p-6 sm:p-8 rounded-xl shadow-lg border-t-4 border-cedhi-accent">
             <h2 class="text-2xl font-bold text-cedhi-primary mb-6 flex items-center">
                 <i class="fas fa-table text-cedhi-accent mr-3"></i>
@@ -368,11 +366,10 @@ if (isset($pdo)) {
                                 </span>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
-                                <!-- El Owner (si existe) no se debe eliminar a sí mismo o al sistema central -->
                                 <?php if ($usuario['modulo'] !== 'Owner'): ?>
                                 <button
                                     class="text-white bg-cedhi-danger hover:bg-red-700 py-1 px-3 rounded-md shadow-sm transition flex items-center justify-center mx-auto"
-                                    onclick="confirmDelete(<?php echo $usuario['user_id']; ?>, '<?php echo htmlspecialchars($usuario['nombre']); ?>')">
+                                    onclick="confirmDelete(<?php echo $usuario['user_id']; ?>, '<?php echo htmlspecialchars($usuario['nombre']); ?>', <?php echo $module_map_name_to_id[$usuario['modulo']]; ?>)">
                                     <i class="fas fa-trash-alt mr-1"></i> Eliminar
                                 </button>
                                 <?php else: ?>
@@ -388,7 +385,6 @@ if (isset($pdo)) {
         </div>
     </main>
 
-    <!-- Modal de Confirmación (Simulado con JS) -->
     <div id="deleteModal"
         class="fixed inset-0 bg-gray-600 bg-opacity-75 hidden items-center justify-center p-4 z-50 transition-opacity duration-300">
         <div class="bg-white rounded-xl shadow-2xl p-6 w-full max-w-sm">
@@ -396,14 +392,15 @@ if (isset($pdo)) {
                 <i class="fas fa-exclamation-triangle text-cedhi-danger mr-2"></i> Confirmar Eliminación
             </h3>
             <p class="text-gray-600 mb-4">¿Estás seguro de que deseas eliminar al administrador <span id="adminName"
-                    class="font-semibold text-cedhi-danger"></span>? Esta acción es irreversible.</p>
+                    class="font-semibold text-cedhi-danger"></span> del módulo asignado? Esta acción es irreversible.</p>
             <div class="flex justify-end space-x-3">
                 <button onclick="closeModal()"
                     class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition">Cancelar</button>
                 <form id="deleteForm" action="admin_gestion.php" method="POST" class="inline">
-                    <!-- Necesitas un campo oculto para el ID del usuario a eliminar y la acción -->
                     <input type="hidden" name="action" value="delete_admin">
                     <input type="hidden" name="user_id_to_delete" id="userIdToDelete">
+                    <input type="hidden" name="module_id_to_delete" id="moduleIdToDelete">
+
                     <button type="submit"
                         class="px-4 py-2 bg-cedhi-danger text-white rounded-lg hover:bg-red-700 transition flex items-center">
                         <i class="fas fa-trash-alt mr-1"></i> Confirmar
@@ -413,9 +410,7 @@ if (isset($pdo)) {
         </div>
     </div>
 
-    <!-- Script para la funcionalidad del formulario y modal -->
     <script>
-    // Función para alternar la visibilidad de la contraseña
     function togglePasswordVisibility(id, iconElement) {
         const input = document.getElementById(id);
         const icon = iconElement.querySelector('i');
@@ -430,15 +425,15 @@ if (isset($pdo)) {
         }
     }
 
-    // Funciones del Modal
     let currentUserId = null;
 
-    function confirmDelete(userId, userName) {
+    function confirmDelete(userId, userName, moduleId) {
         currentUserId = userId;
         document.getElementById('adminName').textContent = userName;
-        document.getElementById('userIdToDelete').value = userId; // Establecer el ID en el formulario
+        document.getElementById('userIdToDelete').value = userId;
         document.getElementById('deleteModal').classList.remove('hidden');
         document.getElementById('deleteModal').classList.add('flex');
+        document.getElementById('moduleIdToDelete').value = moduleId;
     }
 
     function closeModal() {
@@ -446,7 +441,6 @@ if (isset($pdo)) {
         document.getElementById('deleteModal').classList.remove('flex');
     }
 
-    // Cierra el modal si se hace clic fuera de él
     document.getElementById('deleteModal').addEventListener('click', function(e) {
         if (e.target === this) {
             closeModal();
