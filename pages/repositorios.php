@@ -86,32 +86,44 @@ error_reporting(E_ALL);
             text-align: center;
             font-size: 0.9rem;
         }
+        .btn-sistema {
+            background-color: transparent;
+            color: #ffffff !important;
+            border: 1.5px solid #cccccc;
+            border-radius: 25px;
+            padding: 6px 16px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .btn-sistema:hover {
+            background-color: #ffffff;
+            color: #2c3e50 !important;
+            border-color: #ffffff;
+        }
+
     </style>
 </head>
 <body>
-
-    <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark">
         <div class="container-fluid">
-            <a class="navbar-brand" href="#">
-                <img src="<?php echo url('img/logotipo3.png') ?>" alt="CEDHI"> 
+            <a class="navbar-brand" href="repositorios.php">
+                <img src="<?php echo url('img/logo_cedhi_claro.png') ?>" alt="CEDHI"> 
+                Repositorios Externos
             </a>
-            <div class="collapse navbar-collapse">
-                <li class="nav-item">
-                        <a class="nav-link" href="http://localhost/Biblioteca-CEDHI/">
+            <<div class="collapse navbar-collapse">
+                <ul class="navbar-nav ms-auto d-flex align-items-center">
+                    <li class="nav-item">
+                        <a href="http://localhost/Biblioteca-CEDHI/" class="btn btn-sistema">
                             <i class="fas fa-home"></i> Sistema Central
                         </a>
-                </li>
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link active" href="repositorios.php">Repositorios</a>
                     </li>
                 </ul>
             </div>
         </div>
     </nav>
 
-    <!-- Contenido -->
     <div class="container mt-5">
         <h2 class="mb-4 text-center">Repositorios Externos Gratuitos</h2>
         <div class="row g-4">
@@ -216,14 +228,12 @@ error_reporting(E_ALL);
         </div>
     </div>
 
-    <!-- Footer -->
     <footer>
         <div class="container">
             <p>© <?= date('Y') ?> CEDHI - Repositorios Externos</p>
         </div>
     </footer>
 
-    <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
