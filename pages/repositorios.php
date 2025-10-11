@@ -97,6 +97,11 @@ error_reporting(E_ALL);
                 <img src="<?php echo url('img/logotipo3.png') ?>" alt="CEDHI"> 
             </a>
             <div class="collapse navbar-collapse">
+                <li class="nav-item">
+                        <a class="nav-link" href="http://localhost/Biblioteca-CEDHI/">
+                            <i class="fas fa-home"></i> Sistema Central
+                        </a>
+                </li>
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
                         <a class="nav-link active" href="repositorios.php">Repositorios</a>

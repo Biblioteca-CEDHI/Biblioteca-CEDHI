@@ -23,8 +23,6 @@ if (isset($pdo)) {
     }
 }
 
-
-
 ?>
 <script>
     tailwind.config = {

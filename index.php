@@ -19,7 +19,6 @@ if (isset($_GET["code"])) {
             $_SESSION['user_first_name'] = $userData['first_name'];
             $_SESSION['user_last_name'] = $userData['last_name'];
             $_SESSION['user_email_address'] = $userData['email'];
-            $_SESSION['user_image'] = $userData['picture'];
             $_SESSION['role'] = $userData['role']; // Este es el rol VERDADERO desde la BD
             $logged_in = true;
         }
