@@ -199,7 +199,7 @@ error_reporting(E_ALL);
             </div>
             <div class="col-md-4 col-sm-6">
                 <div class="card h-100">
-                    <img src="https://images.seeklogo.com/logo-png/48/1/google-scholar-logo-png_seeklogo-484488.png" class="card-img-top" alt="Google Scholar">
+                    <img src="<?php echo url('img/Google_Scholar_logo.svg') ?>" class="card-img-top" alt="Google Scholar">
                     <div class="card-body d-flex flex-column">
                         <h5 class="card-title">Google Scholar</h5>
                         <p class="card-text">Buscador especializado en literatura académica, artículos, tesis y libros de múltiples disciplinas.</p>
