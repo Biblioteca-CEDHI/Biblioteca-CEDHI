@@ -5,9 +5,20 @@ if (session_status() === PHP_SESSION_NONE) {
 
 require_once __DIR__ . '/../../app/paths.php';
 require_once __DIR__ . '/../../app/tokenController.php';
-//error_log("DEBUG - Antes de generar token: " . print_r($_SESSION, true));
-$tokenPlanes = generateToken();
-$tokenSala = generateToken();
+require_once __DIR__ . '/../../app/moduleAccess.php';
+
+$userId = $_SESSION['user_id'] ?? null;
+$userRole = $_SESSION['role'] ?? null;
+
+$SALA_ID = 4;
+$PLANES_ID = 2;
+
+$accesoPlanes = canAccessModule($userId, $PLANES_ID, $userRole);
+$accesoSalaLectura = canAccessModule($userId, $SALA_ID, $userRole);
+
+$tokenPlanes = ($accesoPlanes == "access") ? generateToken() : null;
+$tokenSala = ($accesoSalaLectura == "access") ? generateToken() : null;
+
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -80,7 +91,6 @@ $tokenSala = generateToken();
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <!-- Biblioteca Virtual -->
             <div class="module-card bg-white rounded-xl p-8 flex flex-col items-center text-center border-b-4 border-cedhi-accent">
                 <div class="h-16 w-16 flex items-center justify-center rounded-full bg-cedhi-light text-cedhi-accent mb-4 text-3xl shadow-md">
                     <i class="fa-solid fa-book"></i>
@@ -95,7 +105,7 @@ $tokenSala = generateToken();
                 </a>
             </div>
 
-            <!-- ✅ Planes de Negocio -->
+            <?php if($accesoPlanes == "access"): ?>
             <div class="module-card bg-white rounded-xl p-8 flex flex-col items-center text-center border-b-4 border-cedhi-accent">
                 <div class="h-16 w-16 flex items-center justify-center rounded-full bg-cedhi-light text-cedhi-accent mb-4 text-3xl shadow-md">
                     <i class="fa-solid fa-chart-line"></i>
@@ -109,8 +119,8 @@ $tokenSala = generateToken();
                     <i class="fa-solid fa-folder-open mr-2"></i> Entrar
                 </button>
             </div>
+            <?php endif; ?>
 
-            <!-- Repositorios Externos -->
             <div class="module-card bg-white rounded-xl p-8 flex flex-col items-center text-center border-b-4 border-cedhi-accent">
                 <div class="h-16 w-16 flex items-center justify-center rounded-full bg-cedhi-light text-cedhi-accent mb-4 text-3xl shadow-md">
                     <i class="fa-solid fa-link"></i>
@@ -125,11 +135,7 @@ $tokenSala = generateToken();
                 </a>
             </div>
 
-            <!-- Sala de Lectura (solo roles permitidos) -->
-            <?php
-            $allowedRolesForSala = ['admin', 'owner', 'bibliotecario', 'tutor'];
-            if (in_array($_SESSION['role'], $allowedRolesForSala)) {
-            ?>
+            <?php if ($accesoSalaLectura === 'access'): ?>
                 <div class="module-card bg-white rounded-xl p-8 flex flex-col items-center text-center border-b-4 border-cedhi-success">
                     <div class="h-16 w-16 flex items-center justify-center rounded-full bg-cedhi-light text-cedhi-success mb-4 text-3xl shadow-md">
                         <i class="fa-solid fa-book-open"></i>
@@ -143,22 +149,31 @@ $tokenSala = generateToken();
                         <i class="fa-solid fa-clipboard-list mr-2"></i> Entrar
                     </button>
                 </div>
-            <?php } ?>
+            <?php endif; ?>
         </div>
     </main>
 </body>
 
 <script>
+document.addEventListener('DOMContentLoaded', () => {
     const tokenPlanes = '<?php echo $tokenPlanes; ?>';
     const tokenSala = '<?php echo $tokenSala; ?>';
 
-    document.getElementById('IrPlanesNegocio').addEventListener('click', () => {
-        window.location.href = 'http://localhost/PlanesTrabajo/index.php?token=' + tokenPlanes;
-    });
-
-    document.getElementById('IrSalaLectura').addEventListener('click', () => {
+    const planesBtn = document.getElementById('IrPlanesNegocio');
+    if(planesBtn){
+        planesBtn.addEventListener('click', () => {
+            window.location.href = 'http://localhost/PlanesTrabajo/index.php?token=' + tokenPlanes;
+        });
+    }
+    const salaBtn = document.getElementById('IrSalaLectura');
+    console.log("boton sala", salaBtn);
+    if(salaBtn){
+        console.log("token sala", tokenSala);
+        salaBtn.addEventListener('click', () => {
         window.location.href = 'http://localhost:3010/sistema-biblioteca/token-login?token=' + tokenSala;
-    });
+        });
+    }    
+});
 </script>
 
 </html>

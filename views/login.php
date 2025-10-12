@@ -13,7 +13,6 @@
     ">
     <div class="absolute inset-0 bg-black/30 backdrop-blur-sm z-0"></div>
     <div class="relative z-10 bg-white bg-opacity-90 shadow-xl rounded-2xl p-10 w-full max-w-md">
-        <!-- Mensajes de error -->
         <?php if (isset($_SESSION['login_error'])): ?>
         <div class="alert alert-danger">
             <i class="fas fa-exclamation-circle"></i>

@@ -14,7 +14,6 @@ $in_clause = "'" . implode("','", $admin_modules) . "'";
 
 if (isset($pdo)) {
     try {
-        // 1. CONSULTA: Obtener la lista de módulos para el SELECT del formulario
         $sql_admins = "SELECT COUNT(DISTINCT user_id) FROM module_admins";
         $stmt_admins = $pdo->query($sql_admins);
         $admin_count = $stmt_admins->fetchColumn();
@@ -24,64 +23,58 @@ if (isset($pdo)) {
     }
 }
 
-
-
 ?>
 <script>
-tailwind.config = {
-    theme: {
-        extend: {
-            colors: {
-                cedhi: {
-                    primary: "#2C3E50", // Gris Oscuro Azulado (Base)
-                    secondary: "#34495E", // Tono más claro para hover
-                    accent: "#1ABC9C", // Verde Turquesa (Acento)
-                    light: "#ECF0F1", // Fondo
-                    success: "#27AE60", // Verde Esmeralda
+    tailwind.config = {
+        theme: {
+            extend: {
+                colors: {
+                    cedhi: {
+                        primary: "#2C3E50", // Gris Oscuro Azulado (Base)
+                        secondary: "#34495E", // Tono más claro para hover
+                        accent: "#1ABC9C", // Verde Turquesa (Acento)
+                        light: "#ECF0F1", // Fondo
+                        success: "#27AE60", // Verde Esmeralda
+                    }
                 }
             }
         }
     }
-}
 </script>
 
 <style>
-body {
-    background-color: #ECF0F1;
-    /* Fondo cedhi-light */
-}
+    body {
+        background-color: #ECF0F1;
+    }
 
-.user-avatar {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    object-fit: cover;
-}
+    .user-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
 
-/* Estilos para la sección de bienvenida */
-.welcome-header {
-    background-color: #2C3E50;
-    /* cedhi-primary */
-    color: white;
-    border-radius: 15px;
-    padding: 2.5rem;
-    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
-}
+    .welcome-header {
+        background-color: #2C3E50;
+        color: white;
+        border-radius: 15px;
+        padding: 2.5rem;
+        box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+    }
 
-/* Estilos para todas las tarjetas de la página */
-.card-style {
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
-    height: 100%;
-    border-radius: 0.75rem;
-    /* rounded-xl */
-}
+    .card-style {
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+        height: 100%;
+        border-radius: 0.75rem;
+    }
 
-.card-style:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
-}
+    .card-style:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+    }
 </style>
+
 <div class="max-w-6xl mx-auto px-6 mt-12 mb-12">
     <div class="bg-white border border-cedhi-primary rounded-xl">
 
@@ -93,10 +86,8 @@ body {
         </div>
 
         <div class="p-6">
-            <!-- GRID CON SOLO DOS MÓDULOS IMPORTANTES -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-                <!-- CARD 1: Contador de Administradores -->
                 <div class="card-style bg-white border-l-4 border-cedhi-accent shadow p-5 flex items-center">
                     <i class="fas fa-user-shield fa-3x text-cedhi-accent mr-4"></i>
                     <div>
@@ -105,13 +96,11 @@ body {
                     </div>
                 </div>
 
-                <!-- CARD 2: Módulo de Gestión (Acción) -->
                 <div
                     class="card-style bg-white shadow p-6 text-center flex flex-col justify-center items-center border-b-4 border-cedhi-primary">
                     <i class="fas fa-users-cog fa-3x text-cedhi-primary mb-3"></i>
                     <h6 class="font-bold text-gray-800 mb-3 text-xl">Gestionar Administradores</h6>
                     <p class="text-gray-500 text-sm mb-4">Crear, eliminar y asignar módulos de acceso por rol.</p>
-                    <!-- BOTÓN CON HREF A LA NUEVA PANTALLA -->
                     <a href="admin_gestion.php"
                         class="bg-cedhi-accent text-white font-medium px-4 py-3 rounded-lg w-full flex justify-center items-center gap-2 shadow-md hover:bg-cedhi-primary transition">
                         <i class="fas fa-tools"></i> Abrir Panel de Gestión

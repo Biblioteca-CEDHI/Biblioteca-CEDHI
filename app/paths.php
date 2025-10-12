@@ -1,9 +1,7 @@
 <?php
-// app/paths.php
 
 function get_base_path()
 {
-    // Esto devuelve algo como "/Biblioteca-CEDHI" o simplemente "/" si está en raíz
     return '/' . trim(explode('/', trim($_SERVER['SCRIPT_NAME'], '/'))[0], '/');
 }
 

@@ -6,8 +6,13 @@ requireRole(['owner']);
 $q = trim($_GET['q'] ?? '');
 
 if ($q === '') {
-    echo json_encode([]);
-    exit;
+    $stmt = $pdo->query("
+        SELECT id, CONCAT(first_name, ' ', last_name) AS nombre, email
+        FROM users
+        WHERE role != 'owner'
+        ORDER BY first_name ASC
+        LIMIT 50
+    ");
 }
 
 $stmt = $pdo->prepare("
