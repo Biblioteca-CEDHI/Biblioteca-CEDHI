@@ -1,4 +1,3 @@
-# .gitignore para proyecto PHP
 /app/credentials/
 /vendor/
 .env
