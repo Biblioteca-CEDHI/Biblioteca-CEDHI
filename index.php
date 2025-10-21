@@ -41,8 +41,8 @@ if ($logged_in) {
         case 'admin':        redirect_to('/views/admin/dashboard.php'); break;
         case 'bibliotecario': redirect_to('/views/bibliotecario/dashboard.php'); break;
         case 'tutor':        redirect_to('/views/tutor/dashboard.php'); break;
-        case 'estudiante':
-        default:             redirect_to('/views/estudiante/dashboard.php'); break;
+        case 'general_user':
+        default:             redirect_to('/views/usuario/dashboard.php'); break;
     }
 }
 

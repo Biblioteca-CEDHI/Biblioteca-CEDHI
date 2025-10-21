@@ -67,13 +67,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $stmt_delete = $pdo->prepare("DELETE FROM module_admins WHERE user_id = :user_id AND module_id = :module_id");
                 $stmt_delete->execute([':user_id' => $user_id_to_delete, ':module_id' => $_POST['module_id_to_delete']]);
 
-                $check = $pdo->prepare("SELECT COUNT(*) FROM module_admins WHERE user_id = :user_id");
-                $check->execute([':user_id' => $user_id_to_delete]);
-                if ($check->fetchColumn() == 0) {
-                    $update_role = $pdo->prepare("UPDATE users SET role = 'estudiante' WHERE id = :id");
-                    $update_role->execute([':id' => $user_id_to_delete]);
-                }
-
                 $message = "Administrador eliminado correctamente.";
                 $message_type = "success";
             } catch (PDOException $e) {

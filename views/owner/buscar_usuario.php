@@ -9,7 +9,7 @@ if ($q === '') {
     $stmt = $pdo->query("
         SELECT id, CONCAT(first_name, ' ', last_name) AS nombre, email
         FROM users
-        WHERE role != 'owner'
+        WHERE role = 'admin'
         ORDER BY first_name ASC
         LIMIT 50
     ");
@@ -18,7 +18,7 @@ if ($q === '') {
 $stmt = $pdo->prepare("
     SELECT id, CONCAT(first_name, ' ', last_name) AS nombre, email
     FROM users
-    WHERE role != 'owner' AND (first_name LIKE :q OR last_name LIKE :q OR email LIKE :q)
+    WHERE role = 'admin' AND (first_name LIKE :q OR last_name LIKE :q OR email LIKE :q)
     LIMIT 10
 ");
 $stmt->execute([':q' => "%$q%"]);

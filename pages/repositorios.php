@@ -115,7 +115,7 @@ error_reporting(E_ALL);
             <<div class="collapse navbar-collapse">
                 <ul class="navbar-nav ms-auto d-flex align-items-center">
                     <li class="nav-item">
-                        <a href="http://localhost/Biblioteca-CEDHI/" class="btn btn-sistema">
+                        <a href="http://localhost/BibliotecaCEDHI/" class="btn btn-sistema">
                             <i class="fas fa-home"></i> Sistema Central
                         </a>
                     </li>

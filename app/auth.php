@@ -33,7 +33,7 @@ function loginWithGoogle() {
 
                 if (!$user) {
                     $stmt = $pdo->prepare("INSERT INTO users (google_id, first_name, last_name, email, role)
-                                           VALUES (:google_id, :first_name, :last_name, :email, 'estudiante')");
+                                           VALUES (:google_id, :first_name, :last_name, :email, 'general_user')");
                     $stmt->execute([
                         ":google_id" => $data['id'],
                         ":first_name" => $data['given_name'] ?? '',
