@@ -166,9 +166,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
     const salaBtn = document.getElementById('IrSalaLectura');
-    console.log("boton sala", salaBtn);
     if(salaBtn){
-        console.log("token sala", tokenSala);
         salaBtn.addEventListener('click', () => {
         window.location.href = 'http://localhost:3010/sistema-biblioteca/token-login?token=' + tokenSala;
         });

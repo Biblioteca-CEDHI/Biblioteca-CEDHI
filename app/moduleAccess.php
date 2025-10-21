@@ -15,10 +15,9 @@ function canAccessModule($userId, $moduleId, $userRole) {
     $SALA_DE_LECTURA_ID = 4;
     $PLANES_NEGOCIO_ID = 2;
 
-    $nonAdminRoles = ['bibliotecario', 'tutor', 'owner'];
+    $nonAdminRoles = ['bibliotecario', 'tutor', 'owner', 'usuario'];
 
     if ($moduleId == $SALA_DE_LECTURA_ID) {
-        if ($userRole === 'estudiante') return 'no_access'; 
         if ($userRole === 'admin') {
             $stmt = $pdo->prepare("SELECT * FROM module_admins WHERE user_id = ? AND module_id = ?");
             $stmt->execute([$userId, $moduleId]);

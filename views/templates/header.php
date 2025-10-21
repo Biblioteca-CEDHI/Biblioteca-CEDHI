@@ -3,7 +3,7 @@ require_once __DIR__ . '/../../app/paths.php';
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
-$base_url = '/Biblioteca-CEDHI';
+$base_url = '/BibliotecaCEDHI';
 ?>
 
 <!DOCTYPE html>
@@ -54,7 +54,7 @@ $base_url = '/Biblioteca-CEDHI';
             </h1>
         </div>
         <div class="flex items-center space-x-2 sm:space-x-4">
-            <img src="<?php echo url('img/default-avatar.png') ?>"
+            <img src="<?php echo url('img/default-avatar.jpg') ?>"
                 class="user-avatar mr-2 shadow-inner" alt="Avatar">
 
             <div class="text-right hidden sm:block">
