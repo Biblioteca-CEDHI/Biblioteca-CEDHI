@@ -1,4 +1,4 @@
-/app/credentials/
+/app/config.php
 /vendor/
 .env
 /.htaccess
