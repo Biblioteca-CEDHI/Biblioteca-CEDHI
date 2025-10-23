@@ -5,7 +5,7 @@ require_once __DIR__ . '/database.php';
 function loginWithGoogle() {
     global $google_client, $pdo;
 
-    $allowedDomain = 'gmail.com';//modificar a @cedhinuevaarequipa.edu.pe
+    $allowedDomain = 'cedhinuevaarequipa.edu.pe';
 
     if (isset($_GET["code"])) {
         $token = $google_client->fetchAccessTokenWithAuthCode($_GET["code"]);
