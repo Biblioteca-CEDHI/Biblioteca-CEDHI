@@ -15,7 +15,7 @@ function canAccessModule($userId, $moduleId, $userRole) {
     $SALA_DE_LECTURA_ID = 4;
     $PLANES_NEGOCIO_ID = 2;
 
-    $nonAdminRoles = ['bibliotecario', 'tutor', 'owner', 'usuario'];
+    $nonAdminRoles = ['bibliotecario', 'tutor', 'owner', 'general_user'];
 
     if ($moduleId == $SALA_DE_LECTURA_ID) {
         if ($userRole === 'admin') {

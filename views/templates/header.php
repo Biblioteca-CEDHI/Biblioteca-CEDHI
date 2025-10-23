@@ -62,9 +62,11 @@ $base_url = '/BibliotecaCEDHI';
                 <span class="block font-semibold text-lg">
                     <?php echo htmlspecialchars($_SESSION['user_first_name'] . ' ' . $_SESSION['user_last_name']); ?>
                 </span>
+                <?php if ($_SESSION['role'] != 'general_user'):?>
                 <span class="block text-sm text-cedhi-accent">
                     (<?php echo ucfirst($_SESSION['role']); ?>)
                 </span>
+                <?php endif; ?>
             </div>
             <button
                 class="flex items-center space-x-1 sm:space-x-2 bg-cedhi-secondary border-cedhi-secondary text-white py-2 px-3 sm:py-2 sm:px-5 rounded-lg hover:bg-cedhi-accent transition-colors duration-200 outline-none"
