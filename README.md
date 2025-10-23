@@ -6,7 +6,7 @@ Este proyecto tiene como objetivo centralizar el acceso a los diferentes servici
 Con un único inicio de sesión, los usuarios pueden acceder a distintos módulos según su rol:
 
 - **Biblioteca Virtual** – Catálogo de libros digitales.  
-- **Planes de Negocio** – Repositorio de planes y proyectos empresariales.  
+- **Planes de Negocio** – Repositorio de planes y proyectos empresariales.  https://github.com/enzoaldhairfuentesapaza/Repositorio-de-Planes-de-Trabajo-CEDHI
 - **Recursos Externos** – Acceso a enlaces de bibliotecas y recursos gratuitos.  
 - **Sala de Lectura** – Gestión de préstamos y devoluciones de libros (acceso controlado por rol).  
 

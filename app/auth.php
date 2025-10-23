@@ -5,7 +5,7 @@ require_once __DIR__ . '/database.php';
 function loginWithGoogle() {
     global $google_client, $pdo;
 
-    $allowedDomain = 'gmail.com';//modificar a @cedhinuevaarequipa.edu.pe
+    $allowedDomain = 'cedhinuevaarequipa.edu.pe';
 
     if (isset($_GET["code"])) {
         $token = $google_client->fetchAccessTokenWithAuthCode($_GET["code"]);
@@ -32,14 +32,13 @@ function loginWithGoogle() {
                 $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
                 if (!$user) {
-                    $stmt = $pdo->prepare("INSERT INTO users (google_id, first_name, last_name, email, picture, role)
-                                           VALUES (:google_id, :first_name, :last_name, :email, :picture, 'estudiante')");
+                    $stmt = $pdo->prepare("INSERT INTO users (google_id, first_name, last_name, email, role)
+                                           VALUES (:google_id, :first_name, :last_name, :email, 'general_user')");
                     $stmt->execute([
                         ":google_id" => $data['id'],
                         ":first_name" => $data['given_name'] ?? '',
                         ":last_name"  => $data['family_name'] ?? '',
-                        ":email"      => $data['email'],
-                        ":picture"    => $data['picture'] ?? ''
+                        ":email"      => $data['email']
                     ]);
 
                     $userId = $pdo->lastInsertId();
@@ -49,14 +48,13 @@ function loginWithGoogle() {
                 } else {
                     $stmt = $pdo->prepare("UPDATE users 
                                            SET google_id = :google_id, first_name = :first_name, 
-                                               last_name = :last_name, email = :email, picture = :picture 
+                                               last_name = :last_name, email = :email
                                            WHERE id = :id");
                     $stmt->execute([
                         ":google_id" => $data['id'],
                         ":first_name" => $data['given_name'] ?? '',
                         ":last_name"  => $data['family_name'] ?? '',
                         ":email"      => $data['email'],
-                        ":picture"    => $data['picture'] ?? '',
                         ":id"         => $user['id']//id extraído de la bd, no de google
                     ]);
 
@@ -71,7 +69,6 @@ function loginWithGoogle() {
                     'first_name' => $user['first_name'],
                     'last_name' => $user['last_name'],
                     'email' => $user['email'],
-                    'picture' => $user['picture'],
                     'role' => $user['role'] //rol asignado en la bd
                 ];
 

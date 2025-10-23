@@ -14,12 +14,11 @@ if (isset($_GET["code"])) {
         $userData = loginWithGoogle(); // Esta función ahora puede lanzar una excepción
 
         if ($userData) {
-            // 🎯 Guardar en sesión los datos DEVUELTOS por la función (que vienen de la BD)
+            // Guardar en sesión los datos DEVUELTOS por la función (que vienen de la BD)
             $_SESSION['user_id'] = $userData['user_id'];
             $_SESSION['user_first_name'] = $userData['first_name'];
             $_SESSION['user_last_name'] = $userData['last_name'];
             $_SESSION['user_email_address'] = $userData['email'];
-            $_SESSION['user_image'] = $userData['picture'];
             $_SESSION['role'] = $userData['role']; // Este es el rol VERDADERO desde la BD
             $logged_in = true;
         }
@@ -34,16 +33,15 @@ if (isset($_GET["code"])) {
 // Verificar si ya está logueado (por la sesión, no solo por el token de Google)
 $logged_in = $logged_in || (isset($_SESSION['access_token']) && isset($_SESSION['user_id']));
 
-// 🚨 Redirigir si está logueado
+// Redirigir si está logueado
 if ($logged_in) {
     require_once __DIR__ . '/app/paths.php';
     switch ($_SESSION['role']) {
-        case 'owner':
+        case 'owner':        redirect_to('/views/owner/dashboard.php'); break;
         case 'admin':        redirect_to('/views/admin/dashboard.php'); break;
         case 'bibliotecario': redirect_to('/views/bibliotecario/dashboard.php'); break;
         case 'tutor':        redirect_to('/views/tutor/dashboard.php'); break;
-        case 'estudiante':
-        default:             redirect_to('/views/estudiante/dashboard.php'); break;
+        case 'general_user': redirect_to('/views/general_user/dashboard.php'); break;
     }
 }
 

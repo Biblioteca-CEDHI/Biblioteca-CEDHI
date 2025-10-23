@@ -1,10 +1,8 @@
-# .gitignore para proyecto PHP
 /app/config.php
-/app/credentials/
 /vendor/
-/node_modules/
-/.env
+.env
 /.htaccess
 *.log
 .DS_Store
 Thumbs.db
+README.md
