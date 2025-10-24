@@ -78,7 +78,7 @@ $tokenSala = ($accesoSalaLectura == "access") ? generateToken() : null;
 
 <body class="bg-cedhi-light min-h-screen">
     <?php include __DIR__ . '/header.php'; ?>
-    <main class="max-w-6xl mx-auto px-4 sm:px-6 py-12">
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 py-12">
 
         <div class="welcome-header mb-8 rounded-xl shadow-xl">
             <h1 class="text-3xl font-extrabold mb-1">
@@ -90,7 +90,7 @@ $tokenSala = ($accesoSalaLectura == "access") ? generateToken() : null;
             </p>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             <div
                 class="module-card bg-white rounded-xl p-8 flex flex-col items-center text-center border-b-4 border-cedhi-accent">
                 <div
@@ -143,9 +143,9 @@ $tokenSala = ($accesoSalaLectura == "access") ? generateToken() : null;
 
             <?php if ($accesoSalaLectura === 'access'): ?>
             <div
-                class="module-card bg-white rounded-xl p-8 flex flex-col items-center text-center border-b-4 border-cedhi-success">
+                class="module-card bg-white rounded-xl p-8 flex flex-col items-center text-center border-b-4 border-cedhi-accent">
                 <div
-                    class="h-16 w-16 flex items-center justify-center rounded-full bg-cedhi-light text-cedhi-success mb-4 text-3xl shadow-md">
+                    class="h-16 w-16 flex items-center justify-center rounded-full bg-cedhi-light text-cedhi-accent mb-4 text-3xl shadow-md">
                     <i class="fa-solid fa-book-open"></i>
                 </div>
                 <h2 class="text-xl font-bold text-gray-800 mb-2">Sala de Lectura</h2>
@@ -153,7 +153,7 @@ $tokenSala = ($accesoSalaLectura == "access") ? generateToken() : null;
                     Gestión y control de préstamos de libros físicos.
                 </p>
                 <button id="IrSalaLectura"
-                    class="w-full py-3 px-4 rounded-lg font-semibold text-white bg-cedhi-success hover:bg-green-700 transition shadow-lg hover:shadow-xl">
+                    class="w-full py-3 px-4 rounded-lg font-semibold text-white bg-cedhi-primary hover:bg-cedhi-secondary transition shadow-lg hover:shadow-xl">
                     <i class="fa-solid fa-clipboard-list mr-2"></i> Entrar
                 </button>
             </div>
