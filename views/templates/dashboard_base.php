@@ -90,7 +90,7 @@ $tokenSala = ($accesoSalaLectura == "access") ? generateToken() : null;
             </p>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="grid gap-6 justify-center" style="grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));">
             <div
                 class="module-card bg-white rounded-xl p-8 flex flex-col items-center text-center border-b-4 border-cedhi-accent">
                 <div
