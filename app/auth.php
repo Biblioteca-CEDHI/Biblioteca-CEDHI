@@ -23,7 +23,7 @@ function loginWithGoogle() {
 
                 if ($emailDomain !== $allowedDomain) {
                     logout();
-                    throw new Exception("Acceso denegado. Solo se permiten cuentas de @{$allowedDomain}.");
+                    throw new Exception("Correo no válido. Debe terminar en @{$allowedDomain}.");
                     return null;
                 }
 
