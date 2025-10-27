@@ -6,8 +6,9 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-logout();
-
+//logout();
+session_destroy();
+setcookie('auth_token', '', time() - 3600, '/', '', true, true);
 header("Location: " . url('index.php?logout=success'));
 exit();
 ?>
