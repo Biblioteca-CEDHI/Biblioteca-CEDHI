@@ -14,7 +14,12 @@ $in_clause = "'" . implode("','", $admin_modules) . "'";
 
 if (isset($pdo)) {
     try {
-        $sql_admins = "SELECT COUNT(DISTINCT user_id) FROM module_admins";
+        $sql_admins = "
+            SELECT COUNT(DISTINCT ma.user_id) 
+            FROM module_admins ma
+            INNER JOIN users u ON ma.user_id = u.id
+            WHERE u.estado = 'activo'
+        ";
         $stmt_admins = $pdo->query($sql_admins);
         $admin_count = $stmt_admins->fetchColumn();
     } catch (PDOException $e) {
@@ -22,6 +27,7 @@ if (isset($pdo)) {
         error_log($query_error);
     }
 }
+
 
 ?>
 <script>
