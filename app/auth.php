@@ -32,8 +32,8 @@ function loginWithGoogle() {
                 $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
                 if (!$user) {
-                    $stmt = $pdo->prepare("INSERT INTO users (google_id, first_name, last_name, email, role)
-                                           VALUES (:google_id, :first_name, :last_name, :email, 'general_user')");
+                    $stmt = $pdo->prepare("INSERT INTO users (google_id, first_name, last_name, email, role, estado)
+                                           VALUES (:google_id, :first_name, :last_name, :email, 'general_user', 'activo')");
                     $stmt->execute([
                         ":google_id" => $data['id'],
                         ":first_name" => $data['given_name'] ?? '',
@@ -55,7 +55,7 @@ function loginWithGoogle() {
                         ":first_name" => $data['given_name'] ?? '',
                         ":last_name"  => $data['family_name'] ?? '',
                         ":email"      => $data['email'],
-                        ":id"         => $user['id']//id extraído de la bd, no de google
+                        ":id"         => $user['id']
                     ]);
 
                     $stmt = $pdo->prepare("SELECT * FROM users WHERE id = :id");
@@ -69,7 +69,8 @@ function loginWithGoogle() {
                     'first_name' => $user['first_name'],
                     'last_name' => $user['last_name'],
                     'email' => $user['email'],
-                    'role' => $user['role'] //rol asignado en la bd
+                    'role' => $user['role'],
+                    'estado' => $user['estado'] ?? 'activo'
                 ];
 
                 return $userDataForSession;
