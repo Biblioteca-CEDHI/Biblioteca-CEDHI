@@ -112,7 +112,7 @@ require_once __DIR__ . '/../app/paths.php';
             <div class="ms-auto d-flex align-items-center">
                 <ul class="navbar-nav">
                     <li class="nav-item">
-                        <a href="http://localhost/BibliotecaCEDHI/" class="btn btn-sistema">
+                        <a href="http://bibliotecacedhi.infinityfreeapp.com/" class="btn btn-sistema">
                             <i class="fas fa-home"></i>
                             <span class="d-none d-md-inline"> Sistema Central</span>
                         </a>

@@ -19,8 +19,6 @@ function generateToken($expSeconds = 3600) {
         'exp'      => time() + $expSeconds
     ];
 
-    //error_log("DEBUG - Payload generado: " . print_r($payload, true));
-
     $key = 'cedhi2024biblio';
     return Firebase\JWT\JWT::encode($payload, $key, 'HS256');
 }

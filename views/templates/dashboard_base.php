@@ -135,7 +135,7 @@ $tokenSala = ($accesoSalaLectura == "access") ? generateToken() : null;
                 <p class="text-base text-gray-500 mb-6">
                     Accede a enlaces directos a recursos gratuitos.
                 </p>
-                <a href="<?php echo url('pages/repositorios.php') ?>"
+                <a href="<?php echo url('pages/repositorios.php'); ?>"
                     class="w-full py-3 px-4 rounded-lg font-semibold text-white bg-cedhi-primary hover:bg-cedhi-secondary transition shadow-lg hover:shadow-xl">
                     <i class="fa-solid fa-external-link-alt mr-2"></i> Entrar
                 </a>
@@ -170,13 +170,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const planesBtn = document.getElementById('IrPlanesNegocio');
     if (planesBtn) {
         planesBtn.addEventListener('click', () => {
-            window.location.href = 'http://localhost/PlanesTrabajo/index.php?token=' + tokenPlanes;
+            window.location.href = 'http://planesnegocio.infinityfreeapp.com/index.php?token=' + tokenPlanes;
         });
     }
     const salaBtn = document.getElementById('IrSalaLectura');
     if (salaBtn) {
         salaBtn.addEventListener('click', () => {
-            window.location.href = 'http://localhost:3010/token-login?token=' + tokenSala;
+            window.location.href = 'http://sistema-biblioteca-cedhi-frontend.vercel.app/token-login?token=' + tokenSala;
         });
     }
 });

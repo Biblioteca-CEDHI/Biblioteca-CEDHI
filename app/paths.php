@@ -1,18 +1,27 @@
 <?php
 
-function get_base_path()
+function get_base_url()
 {
-    return '/' . trim(explode('/', trim($_SERVER['SCRIPT_NAME'], '/'))[0], '/');
+    $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? "https" : "http";
+    $host = $_SERVER['HTTP_HOST'];
+    
+    $dir = str_replace('/index.php', '', $_SERVER['SCRIPT_NAME']);
+    $dir = rtrim(dirname($dir), '/\\');
+
+    return $protocol . '://' . $host . $dir;
 }
 
 function url($path = '')
 {
+    $base = 'https://bibliotecacedhi.infinityfreeapp.com';
     $path = ltrim($path, '/');
-    return get_base_path() . '/' . $path;
+    return $base . '/' . $path;
 }
 
 function redirect_to($route)
 {
-    header("Location: " . url($route));
+    $full = url($route);
+    echo "Redirecting to: $full";
+    header("Location: " . $full);
     exit;
 }
