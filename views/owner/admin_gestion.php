@@ -56,77 +56,22 @@ function get_badge_classes($modulo)
     };
 }
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if (!isset($pdo)) {
-        $message = "No se puede procesar. La conexión a la BD no está disponible.";
-        $message_type = 'danger';
-    } elseif ($_POST['action'] === 'delete_admin') {
-        $user_id_to_delete = $_POST['user_id_to_delete'] ?? null;
-        if ($user_id_to_delete) {
-            try {
-                $stmt_delete = $pdo->prepare("DELETE FROM module_admins WHERE user_id = :user_id AND module_id = :module_id");
-                $stmt_delete->execute([':user_id' => $user_id_to_delete, ':module_id' => $_POST['module_id_to_delete']]);
-
-                $message = "Administrador eliminado correctamente.";
-                $message_type = "success";
-            } catch (PDOException $e) {
-                $message = "Error al eliminar administrador: " . $e->getMessage();
-                $message_type = "danger";
-            }
-        } else {
-            $message = "ID de usuario inválido.";
-            $message_type = "danger";
-        }
-    } elseif ($_POST['action'] === 'assign_admin') {
-        $usuario_id = $_POST['usuario'] ?? null;
-        $modulo = $_POST['modulo'] ?? null;
-
-        if (!$usuario_id || !$modulo) {
-            $message = "Debes seleccionar un usuario y un módulo.";
-            $message_type = 'danger';
-        } elseif (!array_key_exists($modulo, $modulos_asignables)) {
-            $message = "Módulo asignado inválido.";
-            $message_type = 'danger';
-        } else {
-            try {
-                $pdo->beginTransaction();
-                $module_id = $module_map_name_to_id[$modulo];
-
-                $check = $pdo->prepare("SELECT 1 FROM module_admins WHERE user_id = :user_id AND module_id = :module_id");
-                $check->execute([':user_id' => $usuario_id, ':module_id' => $module_id]);
-
-                if ($check->rowCount() > 0) {
-                    $message = "El usuario ya es administrador de este módulo.";
-                    $message_type = "warning";
-                } else {
-                    $stmt_admin = $pdo->prepare("INSERT INTO module_admins (user_id, module_id) VALUES (:user_id, :module_id)");
-                    $stmt_admin->execute([':user_id' => $usuario_id, ':module_id' => $module_id]);
-
-                    $update_role = $pdo->prepare("UPDATE users SET role = 'admin' WHERE id = :id");
-                    $update_role->execute([':id' => $usuario_id]);
-
-                    $pdo->commit();
-                    $message = "Administrador asignado correctamente.";
-                    $message_type = "success";
-                }
-            } catch (PDOException $e) {
-                $pdo->rollBack();
-                $message = "Error al asignar administrador: " . $e->getMessage();
-                $message_type = "danger";
-            }
-        }
-    }
-}
-
 $usuarios_registrados = [];
 if (isset($pdo)) {
     try {
         $sql_fetch = "
-            SELECT u.id AS user_id, u.first_name AS nombre, u.last_name AS apellido, u.email AS correo, m.module_name AS modulo
-            FROM users u
-            JOIN module_admins ma ON u.id = ma.user_id
-            JOIN modules m ON ma.module_id = m.id
-            ORDER BY u.id ASC
+            SELECT 
+            u.id AS user_id, 
+            u.first_name AS nombre, 
+            u.last_name AS apellido, 
+            u.email AS correo,
+            GROUP_CONCAT(DISTINCT COALESCE(m.module_name, 'Sin módulo asignado') SEPARATOR ', ') AS modulos
+        FROM users u
+        LEFT JOIN module_admins ma ON u.id = ma.user_id
+        LEFT JOIN modules m ON ma.module_id = m.id
+        WHERE u.role = 'admin'
+        GROUP BY u.id
+        ORDER BY u.id ASC
         ";
         $stmt_fetch = $pdo->query($sql_fetch);
         $usuarios_registrados = $stmt_fetch->fetchAll(PDO::FETCH_ASSOC);
@@ -136,6 +81,45 @@ if (isset($pdo)) {
         error_log("Error al cargar lista: " . $e->getMessage());
     }
 }
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['accion']) && $_POST['accion'] === 'actualizar_modulos') {
+    $user_id = intval($_POST['user_id']);
+    $modulos = isset($_POST['module_ids']) ? explode(',', $_POST['module_ids']) : [];
+
+    try {
+        $stmt = $pdo->prepare("DELETE FROM module_admins WHERE user_id = ?");
+        $stmt->execute([$user_id]);
+
+        if (!empty($modulos)) {
+            $stmt = $pdo->prepare("INSERT INTO module_admins (user_id, module_id) VALUES (?, ?)");
+            foreach ($modulos as $mod_id) {
+                if (is_numeric($mod_id) && $mod_id > 0) {
+                    $stmt->execute([$user_id, intval($mod_id)]);
+                }
+            }
+        }
+
+        echo json_encode(['success' => true]);
+    } catch (PDOException $e) {
+        echo json_encode(['success' => false, 'error' => $e->getMessage()]);
+    }
+    exit;
+}
+
+if (isset($_POST['accion']) && $_POST['accion'] === 'actualizar_estado') {
+    $user_id = intval($_POST['user_id']);
+    $nuevo_estado = $_POST['estado'] === 'activo' ? 'activo' : 'inactivo';
+    try {
+        $stmt = $pdo->prepare("UPDATE users SET estado = ? WHERE id = ?");
+        $stmt->execute([$nuevo_estado, $user_id]);
+        echo json_encode(['success' => true]);
+    } catch (PDOException $e) {
+        echo json_encode(['success' => false, 'error' => $e->getMessage()]);
+    }
+    exit;
+}
+
+
 ?>
 
 
@@ -195,18 +179,6 @@ if (isset($pdo)) {
         closeUserModal();
     }
 
-    function confirmDelete(userId, userName) {
-        document.getElementById('adminName').textContent = userName;
-        document.getElementById('userIdToDelete').value = userId;
-        document.getElementById('deleteModal').classList.replace('hidden', 'flex');
-    }
-
-    function closeModal() {
-        document.getElementById('deleteModal').classList.replace('flex', 'hidden');
-    }
-    document.getElementById('deleteModal')?.addEventListener('click', e => {
-        if (e.target === e.currentTarget) closeModal();
-    });
     </script>
     <style>
     body {
@@ -216,6 +188,37 @@ if (isset($pdo)) {
     .input-focus:focus {
         border-color: #1ABC9C;
         box-shadow: 0 0 0 2px rgba(26, 188, 156, 0.5);
+    }
+    input[type="checkbox"].form-checkbox {
+        appearance: none;
+        -webkit-appearance: none;
+        background-color: #fff;
+        border: 2px solid #1ABC9C;
+        width: 18px;
+        height: 18px;
+        border-radius: 0.25rem;
+        display: inline-block;
+        position: relative;
+        cursor: pointer;
+        transition: all 0.2s ease-in-out;
+        vertical-align: middle;
+    }
+
+    input[type="checkbox"].form-checkbox:checked {
+        background-color: #1ABC9C;
+        border-color: #1ABC9C;
+    }
+
+    input[type="checkbox"].form-checkbox:checked::after {
+        content: "";
+        position: absolute;
+        top: 2px;
+        left: 5px;
+        width: 4px;
+        height: 8px;
+        border: solid white;
+        border-width: 0 2px 2px 0;
+        transform: rotate(45deg);
     }
     </style>
 </head>
@@ -256,64 +259,8 @@ if (isset($pdo)) {
         </div>
         <?php endif; ?>
 
-        <div class="bg-white p-6 sm:p-8 rounded-xl shadow-lg mb-10 border-t-4 border-cedhi-primary">
-            <h2 class="text-2xl font-bold text-cedhi-primary mb-6 flex items-center">
-                <i class="fas fa-user-plus text-cedhi-accent mr-3"></i>
-                Registrar Administrador de Módulo
-            </h2>
-
-            <form action="admin_gestion.php" method="POST" class="space-y-4">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Usuario Seleccionado</label>
-                    <div class="flex items-center gap-2">
-                        <input type="hidden" id="usuario" name="usuario"> <!-- aquí se guarda el id -->
-                        <input type="text" id="usuario_nombre" class="w-full px-4 py-2 border rounded-lg bg-gray-100"
-                            placeholder="Ningún usuario seleccionado" readonly>
-                        <button type="button" onclick="openUserModal()"
-                            class="px-3 py-2 bg-cedhi-accent text-white rounded-lg hover:bg-cedhi-primary transition">
-                            <i class="fas fa-search"></i>
-                        </button>
-                    </div>
-                </div>
-
-                <div>
-                    <label for="modulo" class="block text-sm font-medium text-gray-700">Asignar Módulo a
-                        Administrar</label>
-                    <select id="modulo" name="modulo" class="w-full px-4 py-2 border rounded-lg bg-white" required>
-                        <?php foreach ($modulos_asignables as $value => $label): ?>
-                        <option value="<?php echo htmlspecialchars($value); ?>">
-                            <?php echo htmlspecialchars($label); ?>
-                        </option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
-
-
-                <button type="submit" name="action" value="assign_admin"
-                    class="w-full py-3 mt-4 rounded-lg font-semibold text-white bg-cedhi-accent hover:bg-cedhi-primary transition shadow-md flex justify-center items-center gap-2">
-                    <i class="fas fa-user-check"></i> Asignar Administrador
-                </button>
-            </form>
-
-        </div>
+        
         <!-- Modal -->
-        <div id="userModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
-            <div class="bg-white rounded-xl shadow-lg w-full max-w-lg p-6">
-                <h3 class="text-lg font-bold mb-4">Buscar Usuario</h3>
-                <input type="text" id="searchInput" placeholder="Escribe un nombre o correo..."
-                    class="w-full px-4 py-2 border rounded-lg mb-4" onkeyup="searchUsers(this.value)">
-
-                <div id="searchResults" class="max-h-60 overflow-y-auto divide-y">
-                    <p class="text-gray-400 text-sm italic text-center py-4">Empieza a escribir para buscar...</p>
-                </div>
-
-                <div class="flex justify-end mt-4">
-                    <button onclick="closeUserModal()"
-                        class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300">Cerrar</button>
-                </div>
-            </div>
-        </div>
-
         <div class="bg-white p-6 sm:p-8 rounded-xl shadow-lg border-t-4 border-cedhi-accent">
             <h2 class="text-2xl font-bold text-cedhi-primary mb-6 flex items-center">
                 <i class="fas fa-table text-cedhi-accent mr-3"></i>
@@ -333,9 +280,8 @@ if (isset($pdo)) {
                             <th
                                 class="px-6 py-3 text-left text-xs font-semibold text-cedhi-primary uppercase tracking-wider">
                                 Módulo Asignado</th>
-                            <th
-                                class="px-6 py-3 text-center text-xs font-semibold text-cedhi-primary uppercase tracking-wider rounded-tr-lg">
-                                Acción</th>
+                            <th class="px-6 py-3 text-left text-xs font-semibold text-cedhi-primary uppercase tracking-wider rounded-tr-lg">
+                                Estado</th>
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
@@ -352,22 +298,45 @@ if (isset($pdo)) {
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                 <?php echo htmlspecialchars($usuario['correo']); ?></td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm">
-                                <span
-                                    class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full <?php echo get_badge_classes($usuario['modulo']); ?>">
-                                    <?php echo htmlspecialchars($usuario['modulo']); ?>
-                                </span>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+                                <div class="flex flex-col space-y-1">
+                                    <?php
+                                    $stmt_mods = $pdo->prepare("SELECT module_id FROM module_admins WHERE user_id = ?");
+                                    $stmt_mods->execute([$usuario['user_id']]);
+                                    $modulos_asignados = $stmt_mods->fetchAll(PDO::FETCH_COLUMN);
+                                    ?>
+
+                                    <?php foreach ($modules as $mod): ?>
+                                    <label class="inline-flex items-center space-x-2">
+                                        <input 
+                                            type="checkbox" 
+                                            class="form-checkbox h-4 w-4 text-cedhi-accent focus:ring-cedhi-accent cursor-pointer"
+                                            value="<?php echo $mod['id']; ?>"
+                                            <?php echo in_array($mod['id'], $modulos_asignados) ? 'checked' : ''; ?>
+                                            onchange="actualizarCheckboxModulos(<?php echo $usuario['user_id']; ?>)">
+                                        <span class="text-sm text-gray-800"><?php echo htmlspecialchars($mod['module_name']); ?></span>
+                                    </label>
+                                    <?php endforeach; ?>
+                                </div>
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
-                                <?php if ($usuario['modulo'] !== 'Owner'): ?>
-                                <button
-                                    class="text-white bg-cedhi-danger hover:bg-red-700 py-1 px-3 rounded-md shadow-sm transition flex items-center justify-center mx-auto"
-                                    onclick="confirmDelete(<?php echo $usuario['user_id']; ?>, '<?php echo htmlspecialchars($usuario['nombre']); ?>', <?php echo $module_map_name_to_id[$usuario['modulo']]; ?>)">
-                                    <i class="fas fa-trash-alt mr-1"></i> Eliminar
-                                </button>
-                                <?php else: ?>
-                                <span class="text-gray-400 font-light text-xs">No permitido</span>
-                                <?php endif; ?>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+                                <?php
+                                    $stmt_estado = $pdo->prepare("SELECT estado FROM users WHERE id = ?");
+                                    $stmt_estado->execute([$usuario['user_id']]);
+                                    $estado_actual = $stmt_estado->fetchColumn() ?: 'inactivo';
+                                ?>
+                                <select 
+                                    onchange="actualizarEstadoUsuario(<?php echo $usuario['user_id']; ?>, this.value)"
+                                    class="px-3 py-1 rounded-lg text-sm font-medium border border-gray-300 
+                                        focus:ring-2 focus:ring-cedhi-accent focus:outline-none cursor-pointer transition
+                                        <?php echo $estado_actual === 'activo' 
+                                            ? 'bg-cedhi-accent/10 text-cedhi-accent border-cedhi-accent/30' 
+                                            : 'bg-cedhi-light text-gray-700 border-gray-300'; ?>">
+                                    <option value="activo" class="text-cedhi-accent" 
+                                        <?php echo $estado_actual === 'activo' ? 'selected' : ''; ?>>Activo</option>
+                                    <option value="inactivo" class="text-gray-700" 
+                                        <?php echo $estado_actual === 'inactivo' ? 'selected' : ''; ?>>Inactivo</option>
+                                </select>
                             </td>
                         </tr>
                         <?php endforeach; ?>
@@ -377,70 +346,65 @@ if (isset($pdo)) {
             </div>
         </div>
     </main>
-
-    <div id="deleteModal"
-        class="fixed inset-0 bg-gray-600 bg-opacity-75 hidden items-center justify-center p-4 z-50 transition-opacity duration-300">
-        <div class="bg-white rounded-xl shadow-2xl p-6 w-full max-w-sm">
-            <h3 class="text-xl font-bold text-cedhi-primary mb-3 flex items-center">
-                <i class="fas fa-exclamation-triangle text-cedhi-danger mr-2"></i> Confirmar Eliminación
-            </h3>
-            <p class="text-gray-600 mb-4">¿Estás seguro de que deseas eliminar al administrador <span id="adminName"
-                    class="font-semibold text-cedhi-danger"></span> del módulo asignado? Esta acción es irreversible.</p>
-            <div class="flex justify-end space-x-3">
-                <button onclick="closeModal()"
-                    class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition">Cancelar</button>
-                <form id="deleteForm" action="admin_gestion.php" method="POST" class="inline">
-                    <input type="hidden" name="action" value="delete_admin">
-                    <input type="hidden" name="user_id_to_delete" id="userIdToDelete">
-                    <input type="hidden" name="module_id_to_delete" id="moduleIdToDelete">
-
-                    <button type="submit"
-                        class="px-4 py-2 bg-cedhi-danger text-white rounded-lg hover:bg-red-700 transition flex items-center">
-                        <i class="fas fa-trash-alt mr-1"></i> Confirmar
-                    </button>
-                </form>
-            </div>
-        </div>
-    </div>
-
     <script>
-    function togglePasswordVisibility(id, iconElement) {
-        const input = document.getElementById(id);
-        const icon = iconElement.querySelector('i');
-        if (input.type === 'password') {
-            input.type = 'text';
-            icon.classList.remove('fa-eye-slash');
-            icon.classList.add('fa-eye');
-        } else {
-            input.type = 'password';
-            icon.classList.remove('fa-eye');
-            icon.classList.add('fa-eye-slash');
-        }
+    function actualizarCheckboxModulos(userId) {
+        const row = event.target.closest('tr');
+        const checkboxes = row.querySelectorAll('input[type="checkbox"]');
+        const seleccionados = Array.from(checkboxes)
+            .filter(cb => cb.checked)
+            .map(cb => cb.value);
+
+        fetch('', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+            body: `accion=actualizar_modulos&user_id=${encodeURIComponent(userId)}&module_ids=${encodeURIComponent(seleccionados.join(','))}`
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                mostrarToast('Módulos actualizados correctamente', 'success');
+            } else {
+                mostrarToast('Error al actualizar: ' + (data.error || 'Error desconocido'), 'error');
+            }
+        })
+        .catch(err => {
+            mostrarToast('Error de conexión: ' + err.message, 'error');
+        });
     }
 
-    let currentUserId = null;
-
-    function confirmDelete(userId, userName, moduleId) {
-        currentUserId = userId;
-        document.getElementById('adminName').textContent = userName;
-        document.getElementById('userIdToDelete').value = userId;
-        document.getElementById('deleteModal').classList.remove('hidden');
-        document.getElementById('deleteModal').classList.add('flex');
-        document.getElementById('moduleIdToDelete').value = moduleId;
+    function mostrarToast(mensaje, tipo) {
+        const colores = tipo === 'success'
+            ? 'bg-green-500 text-white'
+            : 'bg-red-500 text-white';
+        const toast = document.createElement('div');
+        toast.className = `${colores} fixed bottom-4 right-4 px-4 py-2 rounded-lg shadow-lg transition-all duration-500 opacity-0`;
+        toast.textContent = mensaje;
+        document.body.appendChild(toast);
+        setTimeout(() => toast.style.opacity = 1, 50);
+        setTimeout(() => {
+            toast.style.opacity = 0;
+            setTimeout(() => toast.remove(), 500);
+        }, 3000);
     }
 
-    function closeModal() {
-        document.getElementById('deleteModal').classList.add('hidden');
-        document.getElementById('deleteModal').classList.remove('flex');
+    function actualizarEstadoUsuario(userId, nuevoEstado) {
+        fetch('', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+            body: `accion=actualizar_estado&user_id=${encodeURIComponent(userId)}&estado=${encodeURIComponent(nuevoEstado)}`
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                mostrarToast('Estado actualizado correctamente', 'success');
+            } else {
+                mostrarToast('Error al actualizar estado: ' + (data.error || 'Error desconocido'), 'error');
+            }
+        })
+        .catch(err => {
+            mostrarToast('Error de conexión: ' + err.message, 'error');
+        });
     }
-
-    document.getElementById('deleteModal').addEventListener('click', function(e) {
-        if (e.target === this) {
-            closeModal();
-        }
-    });
     </script>
-
 </body>
-
 </html>
