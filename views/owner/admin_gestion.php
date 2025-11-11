@@ -178,7 +178,6 @@ if (isset($_POST['accion']) && $_POST['accion'] === 'actualizar_estado') {
         document.getElementById('usuario_nombre').value = nombre;
         closeUserModal();
     }
-
     </script>
     <style>
     body {
@@ -189,6 +188,7 @@ if (isset($_POST['accion']) && $_POST['accion'] === 'actualizar_estado') {
         border-color: #1ABC9C;
         box-shadow: 0 0 0 2px rgba(26, 188, 156, 0.5);
     }
+
     input[type="checkbox"].form-checkbox {
         appearance: none;
         -webkit-appearance: none;
@@ -247,7 +247,7 @@ if (isset($_POST['accion']) && $_POST['accion'] === 'actualizar_estado') {
         </div>
     </header>
 
-    <main class="max-w-4xl mx-auto px-4 sm:px-6 py-12">
+    <main class="max-w-5xl mx-auto px-4 sm:px-6 py-12">
 
         <?php if (!empty($message)): ?>
         <div class="p-4 rounded-xl shadow-md mb-6 
@@ -259,7 +259,7 @@ if (isset($_POST['accion']) && $_POST['accion'] === 'actualizar_estado') {
         </div>
         <?php endif; ?>
 
-        
+
         <!-- Modal -->
         <div class="bg-white p-6 sm:p-8 rounded-xl shadow-lg border-t-4 border-cedhi-accent">
             <h2 class="text-2xl font-bold text-cedhi-primary mb-6 flex items-center">
@@ -280,7 +280,8 @@ if (isset($_POST['accion']) && $_POST['accion'] === 'actualizar_estado') {
                             <th
                                 class="px-6 py-3 text-left text-xs font-semibold text-cedhi-primary uppercase tracking-wider">
                                 Módulo Asignado</th>
-                            <th class="px-6 py-3 text-left text-xs font-semibold text-cedhi-primary uppercase tracking-wider rounded-tr-lg">
+                            <th
+                                class="px-6 py-3 text-left text-xs font-semibold text-cedhi-primary uppercase tracking-wider rounded-tr-lg">
                                 Estado</th>
                         </tr>
                     </thead>
@@ -308,13 +309,13 @@ if (isset($_POST['accion']) && $_POST['accion'] === 'actualizar_estado') {
 
                                     <?php foreach ($modules as $mod): ?>
                                     <label class="inline-flex items-center space-x-2">
-                                        <input 
-                                            type="checkbox" 
+                                        <input type="checkbox"
                                             class="form-checkbox h-4 w-4 text-cedhi-accent focus:ring-cedhi-accent cursor-pointer"
                                             value="<?php echo $mod['id']; ?>"
                                             <?php echo in_array($mod['id'], $modulos_asignados) ? 'checked' : ''; ?>
                                             onchange="actualizarCheckboxModulos(<?php echo $usuario['user_id']; ?>)">
-                                        <span class="text-sm text-gray-800"><?php echo htmlspecialchars($mod['module_name']); ?></span>
+                                        <span
+                                            class="text-sm text-gray-800"><?php echo htmlspecialchars($mod['module_name']); ?></span>
                                     </label>
                                     <?php endforeach; ?>
                                 </div>
@@ -325,16 +326,16 @@ if (isset($_POST['accion']) && $_POST['accion'] === 'actualizar_estado') {
                                     $stmt_estado->execute([$usuario['user_id']]);
                                     $estado_actual = $stmt_estado->fetchColumn() ?: 'inactivo';
                                 ?>
-                                <select 
+                                <select
                                     onchange="actualizarEstadoUsuario(<?php echo $usuario['user_id']; ?>, this.value)"
                                     class="px-3 py-1 rounded-lg text-sm font-medium border border-gray-300 
                                         focus:ring-2 focus:ring-cedhi-accent focus:outline-none cursor-pointer transition
                                         <?php echo $estado_actual === 'activo' 
                                             ? 'bg-cedhi-accent/10 text-cedhi-accent border-cedhi-accent/30' 
                                             : 'bg-cedhi-light text-gray-700 border-gray-300'; ?>">
-                                    <option value="activo" class="text-cedhi-accent" 
+                                    <option value="activo" class="text-cedhi-accent"
                                         <?php echo $estado_actual === 'activo' ? 'selected' : ''; ?>>Activo</option>
-                                    <option value="inactivo" class="text-gray-700" 
+                                    <option value="inactivo" class="text-gray-700"
                                         <?php echo $estado_actual === 'inactivo' ? 'selected' : ''; ?>>Inactivo</option>
                                 </select>
                             </td>
@@ -355,29 +356,32 @@ if (isset($_POST['accion']) && $_POST['accion'] === 'actualizar_estado') {
             .map(cb => cb.value);
 
         fetch('', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-            body: `accion=actualizar_modulos&user_id=${encodeURIComponent(userId)}&module_ids=${encodeURIComponent(seleccionados.join(','))}`
-        })
-        .then(res => res.json())
-        .then(data => {
-            if (data.success) {
-                mostrarToast('Módulos actualizados correctamente', 'success');
-            } else {
-                mostrarToast('Error al actualizar: ' + (data.error || 'Error desconocido'), 'error');
-            }
-        })
-        .catch(err => {
-            mostrarToast('Error de conexión: ' + err.message, 'error');
-        });
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: `accion=actualizar_modulos&user_id=${encodeURIComponent(userId)}&module_ids=${encodeURIComponent(seleccionados.join(','))}`
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    mostrarToast('Módulos actualizados correctamente', 'success');
+                } else {
+                    mostrarToast('Error al actualizar: ' + (data.error || 'Error desconocido'), 'error');
+                }
+            })
+            .catch(err => {
+                mostrarToast('Error de conexión: ' + err.message, 'error');
+            });
     }
 
     function mostrarToast(mensaje, tipo) {
-        const colores = tipo === 'success'
-            ? 'bg-green-500 text-white'
-            : 'bg-red-500 text-white';
+        const colores = tipo === 'success' ?
+            'bg-green-500 text-white' :
+            'bg-red-500 text-white';
         const toast = document.createElement('div');
-        toast.className = `${colores} fixed bottom-4 right-4 px-4 py-2 rounded-lg shadow-lg transition-all duration-500 opacity-0`;
+        toast.className =
+            `${colores} fixed bottom-4 right-4 px-4 py-2 rounded-lg shadow-lg transition-all duration-500 opacity-0`;
         toast.textContent = mensaje;
         document.body.appendChild(toast);
         setTimeout(() => toast.style.opacity = 1, 50);
@@ -389,22 +393,25 @@ if (isset($_POST['accion']) && $_POST['accion'] === 'actualizar_estado') {
 
     function actualizarEstadoUsuario(userId, nuevoEstado) {
         fetch('', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-            body: `accion=actualizar_estado&user_id=${encodeURIComponent(userId)}&estado=${encodeURIComponent(nuevoEstado)}`
-        })
-        .then(res => res.json())
-        .then(data => {
-            if (data.success) {
-                mostrarToast('Estado actualizado correctamente', 'success');
-            } else {
-                mostrarToast('Error al actualizar estado: ' + (data.error || 'Error desconocido'), 'error');
-            }
-        })
-        .catch(err => {
-            mostrarToast('Error de conexión: ' + err.message, 'error');
-        });
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: `accion=actualizar_estado&user_id=${encodeURIComponent(userId)}&estado=${encodeURIComponent(nuevoEstado)}`
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    mostrarToast('Estado actualizado correctamente', 'success');
+                } else {
+                    mostrarToast('Error al actualizar estado: ' + (data.error || 'Error desconocido'), 'error');
+                }
+            })
+            .catch(err => {
+                mostrarToast('Error de conexión: ' + err.message, 'error');
+            });
     }
     </script>
 </body>
+
 </html>
