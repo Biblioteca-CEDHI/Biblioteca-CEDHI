@@ -35,13 +35,7 @@ $logged_in = $logged_in || (isset($_SESSION['access_token']) && isset($_SESSION[
 
 if ($logged_in) {
     require_once __DIR__ . '/app/paths.php';
-    switch ($_SESSION['role']) {
-        case 'owner':         redirect_to('/views/owner/dashboard.php'); break;
-        case 'admin':         redirect_to('/views/admin/dashboard.php'); break;
-        case 'bibliotecario': redirect_to('/views/bibliotecario/dashboard.php'); break;
-        case 'tutor':         redirect_to('/views/tutor/dashboard.php'); break;
-        case 'general_user':  redirect_to('/views/general_user/dashboard.php'); break;
-    }
+    redirect_to('/views/dashboard.php');
 }
 
 include __DIR__ . '/views/login.php';

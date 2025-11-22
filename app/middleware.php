@@ -8,11 +8,8 @@ function requireRole($allowedRoles) {
     $hasPermission = $isAuthenticated && in_array($_SESSION['role'], (array)$allowedRoles);
     
     if (!$isAuthenticated || !$hasPermission) {
-        session_unset();
-        session_destroy();
-        
         $_SESSION['login_error'] = "Acceso denegado. No tienes permisos para acceder a esta página.";
-        header("Location: " . dirname($_SERVER['PHP_SELF']) . "/index.php");
+        header("Location: http://localhost/BibliotecaCEDHI/index.php");
         exit();
     }
 }

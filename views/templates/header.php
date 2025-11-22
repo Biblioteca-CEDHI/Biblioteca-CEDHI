@@ -71,7 +71,7 @@ $base_url = '/BibliotecaCEDHI';
             </div>
             <button
                 class="flex items-center space-x-1 sm:space-x-2 bg-cedhi-secondary border-cedhi-secondary text-white py-2 px-3 sm:py-2 sm:px-5 rounded-lg hover:bg-cedhi-accent transition-colors duration-200 outline-none"
-                onclick="window.location.href='../../logout.php'">
+                onclick="window.location.href='../logout.php'">
                 <i class="fa-solid fa-right-from-bracket text-sm sm:text-base"></i>
                 <span class="hidden sm:block">Cerrar sesión</span>
             </button>

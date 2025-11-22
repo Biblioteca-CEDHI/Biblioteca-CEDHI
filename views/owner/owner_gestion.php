@@ -2,10 +2,6 @@
 if (session_status() === PHP_SESSION_NONE) session_start();
 require_once __DIR__ . '/../../app/middleware.php';
 requireRole(['owner']);
-if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'owner') {
-    header('Location: dashboard.php');
-    exit;
-}
 
 function url($path)
 {
@@ -228,7 +224,7 @@ if (isset($_POST['accion']) && $_POST['accion'] === 'actualizar_estado') {
     <header
         class="flex justify-between items-center p-4 sm:px-8 bg-cedhi-primary text-white shadow-xl sticky top-0 z-10">
         <div class="flex items-center space-x-2 sm:space-x-4">
-            <a href="dashboard.php" class="text-cedhi-accent hover:text-white transition duration-200">
+            <a href="../dashboard.php" class="text-cedhi-accent hover:text-white transition duration-200">
                 <i class="fas fa-arrow-left text-xl mr-2"></i>
             </a>
             <h1 class="text-lg sm:text-2xl font-extrabold tracking-wide">
